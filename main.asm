@@ -14,7 +14,6 @@ main:
     addi $s1, $0, 0 # contador de 1ms (de from 0 a 1000)
     addi $s2, $0, 0 # indicador de turno do mostrador (0 = calor, 1 = umidade, 2 = luminosidade)
 
-
 main_loop:
     
     # pega o tempo atual
