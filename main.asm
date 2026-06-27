@@ -47,8 +47,12 @@ main_loop:
 pula_alterancia:
 	# checagem de sensor e lógica do atuador TODO:
 	
-	# jal ler_teclado # chama procedimento de teclado.asm apara ler as teclas A, B, C
+	jal ler_teclado # chama procedimento de teclado.asm apara ler as teclas A, B, C
 	
+	beq $v0, 0xA, ligar_estufa # se A é critico -> liga estufa
+    	beq $v0, 0xB, ligar_irrigacao # se B é crítico -> liga irrigação
+    	beq $v0, 0xC, ligar_iluminacao # se C é crítico -> liga iluminação
+    	
     	# jal logica_processamento # atualiza alternância de estados (ex: a temperatura é crítica?)
     
     	# jal atualiza_atuadores # chama mostrador.asm para ligar os segmentos do mostrador da esquerda
