@@ -5,19 +5,19 @@
 .globl main
 
 main:
-    # pegar a data de iníio antes de entrar no loop
+    # pegar a data de início antes de entrar no loop
     addi $v0, $0, 30 # service code 30 -> pega o tempo atual do sistema
-    syscall # chamada de sistema  ($a0 guarda os 32-bits mais insignificantes do tempo)
+    syscall # chamada de sistema  ($a0 guarda os 32-bits mais baixos do tempo)
     move $s0, $a0 # salva o tempo inicial em $s0
     
     # inicialização de variável para a alternância temporal
-    addi $s1, $0, 0 # contador de 1ms (de from 0 a 1000)
+    addi $s1, $0, 0 # contador de ms (de 0 a 1000ms)
     addi $s2, $0, 0 # indicador de turno do mostrador (0 = calor, 1 = umidade, 2 = luminosidade)
 
 main_loop:
     
     # pega o tempo atual
-    li $v0, 30 # service code 30 -> pega o tempo atual do sistema
+    addi $v0, $0, 30 # service code 30 -> pega o tempo atual do sistema
     syscall # chamada de sistema
     move $t0, $a0 # salva o tempo atual em $t0
 
@@ -25,7 +25,7 @@ main_loop:
     sub $t1, $t0, $s0 # $t1 guarda a diferença
 
     # checagem da passagem do tempo (passou 1ms?)
-    li $t2, 1 # carrega o tempo de 1ms em $t2
+    addi $t2, $0, 1 # carrega o tempo de 1ms em $t2
     blt $t1, $t2, main_loop # se diferença < 1ms, recomeça main_loop (espera)
 
     # depois de passar 1ms
@@ -45,18 +45,17 @@ main_loop:
 
 
 pula_alterancia:
-	# checagem de sensor e lógica do atuador TODO:
+	
+	# checagem de sensor e lógica do atuador:
 	
 	jal ler_teclado # chama procedimento de teclado.asm apara ler as teclas A, B, C
 	
-	beq $v0, 0xA, ligar_estufa # se A é critico -> liga estufa
-    	beq $v0, 0xB, ligar_irrigacao # se B é crítico -> liga irrigação
-    	beq $v0, 0xC, ligar_iluminacao # se C é crítico -> liga iluminação
-    	
-    	# jal logica_processamento # atualiza alternância de estados (ex: a temperatura é crítica?)
+	# TODO ---- beq $v0, 0xA, ligar_estufa # se A é crítico -> liga estufa
+    	# TODO ---- beq $v0, 0xB, ligar_irrigacao # se B é crítico -> liga irrigação
+    	# TODO ---- beq $v0, 0xC, ligar_iluminacao # se C é crítico -> liga iluminação
     
-    	# jal atualiza_atuadores # chama mostrador.asm para ligar os segmentos do mostrador da esquerda
+    	jal atualiza_atuadores  # chama mostrador.asm para acender as barras do mostrador esquerdo
     
-    	# jal atualiza_diagnosticos # chama mostrador.asm para mostrar 'C', 'U' ou 'L' no mostrador da direita
+    	jal atualiza_diagnosticos # chama mostrador.asm para mostrar 'C', 'U' ou 'L' no mostrador da direita
     
     	j main_loop # volta para o início para repetir o processo

@@ -4,7 +4,7 @@
     endereco_coluna: .word 0xFFFF0014  # onde lemos para saber qual coluna foi apertada
     
     # variável para evitar efeito metralhadora (vários cliques enquanto segura o botão)
-    ultima_tecla: .word 0 # 0 -> nenhuma, 0xA -> tecla A,...
+    ultima_tecla: .word 0 # 0 -> nenhuma, 0xA -> tecla A...
 
 .text
 .globl ler_teclado
@@ -20,10 +20,10 @@ ler_teclado:
     lb $t3, 0($t1) # lê a resposta (qual coluna está pressionada)
 
     # checa se é a tecla A (coluna 2 -> 0x04)
-    beq $t3, 0x04, tecla_a_detectada
+    beq $t3, 0x04, a_detectada
 
     # checa se é a tecla B (coluna 3 -> 0x08)
-    beq $t3, 0x08, tecla_b_detectada
+    beq $t3, 0x08, b_detectada
 
     # verificação da linha 3 (teclas C, D, E, F) ---
     li $t2, 0x08 # 0x08 seleciona a Linha 3
@@ -31,7 +31,7 @@ ler_teclado:
     lb $t3, 0($t1) # lê a resposta
     
     # checa se é a tecla C (coluna 0 -> 0x01)
-    beq $t3, 0x01, tecla_c_detectada
+    beq $t3, 0x01, c_detectada
 
     # nenhuma tecla foi pressionada:
     # zera a memória de última tecla
