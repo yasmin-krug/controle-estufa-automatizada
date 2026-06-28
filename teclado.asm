@@ -16,8 +16,13 @@ ler_teclado:
 
     # verificação da linha 2 (teclas 8, 9, A, B) ---
     li $t2, 0x04 # 0x04 seleciona a linha 2
-    sb $t2, 0($t0) # envia o comando para o teclado
-    lb $t3, 0($t1) # lê a resposta (qual coluna está pressionada)
+    sb $t2, 0($t0) # envia o comando para o teclado 
+    
+    nop
+    nop
+    
+    
+    lbu $t3, 0($t1) # lê a resposta (qual coluna está pressionada)
 
     # checa se é a tecla A (coluna 2 -> 0x04)
     beq $t3, 0x04, a_detectada
@@ -28,7 +33,12 @@ ler_teclado:
     # verificação da linha 3 (teclas C, D, E, F) ---
     li $t2, 0x08 # 0x08 seleciona a Linha 3
     sb $t2, 0($t0) # envia o comando para o teclado
-    lb $t3, 0($t1) # lê a resposta
+    
+      
+    nop
+    nop
+    
+    lbu $t3, 0($t1) # lê a resposta
     
     # checa se é a tecla C (coluna 0 -> 0x01)
     beq $t3, 0x01, c_detectada
@@ -61,13 +71,13 @@ c_detectada:
 # "Edge Detection" -> identificar apenas a tecla do último clique
 checar_repeticao:
     lw $t5, ultima_tecla # carrega a última tecla que foi lida no ciclo anterior
-    beq $t4, $t5, ignorar_tecla # se a tecla atual for igual a anterior, o botão está sendo segurado
+    beq $t4, $t5, ignora_tecla # se a tecla atual for igual a anterior, o botão está sendo segurado
 
     # se a tecla for nova (primeiro clique):
     sw $t4, ultima_tecla # atualiza a memória para dizer "esta tecla está sendo segurada agora"
     move $v0, $t4 # coloca o código da tecla (0xA, 0xB ou 0xC) em $v0 
     jr $ra # retorna ao chamador (volta para o main.asm)
 
-ignorar_tecla:
+ignora_tecla:
     li $v0, 0 # retorna 0 (ignora a tecla, pois já foi registrada no instante que afundou)
     jr $ra # retorna ao chamador (volta para o main.asm)
