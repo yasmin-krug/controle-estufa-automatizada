@@ -53,7 +53,7 @@ pula_alternancia:
 	# IMPORTANTE: salva o resultado de ler_teclado em $s6 antes de qualquer jal
 	# pois jal sobrescreve $ra e chamadas subsequentes destroem $v0
 	move $s6, $v0
-	
+
 	beq $s6, 0xA, controle_calor # liga/desliga estufa conforme o estado (crítico ou não) de A
     	beq $s6, 0xB, controle_umid  # liga/desliga irrigação conforme o estado (crítico ou não) de B
     	beq $s6, 0xC, controle_luz   # liga/desliga iluminação conforme o estado (crítico ou não) de C
@@ -65,11 +65,11 @@ controle_calor:
     j logica_atuadores
     
 controle_umid:
-    # jal altera_estado_umid # TODO: descomentar quando terminar
+    jal altera_estado_umidade # TODO: descomentar quando terminar
     j logica_atuadores
     
 controle_luz:
-    # jal altera_estado_lumi # TODO: descomentar quando terminar
+    jal altera_estado_luz # TODO: descomentar quando terminar
     j logica_atuadores
     
 # lógica dos atuadores (mostrador esquerdo):
@@ -83,14 +83,14 @@ logica_atuadores: # começa sempre verificando a temperatura e segue checando os
     ori $s3, $s3, 0x01 # se calor = 1, acende o bit 0 (0x01 - segmento cima)
 
 check_u:
-    # jal get_estado_umidade # chama proc de umidade.asm
-    # beq $v0, 0, check_l # se não for crítico, passa a checar a luminosidade
-    # ori $s3, $s3, 0x40 # se umidade = 1, acende o bit 6 (0x40 - segmento meio)
+    jal get_estado_umidade # chama proc de umidade.asm
+     beq $v0, 0, check_l # se não for crítico, passa a checar a luminosidade
+     ori $s3, $s3, 0x40 # se umidade = 1, acende o bit 6 (0x40 - segmento meio)
 
 check_l:
-    # jal get_estado_luminosidade # chama proc de luminosidade.asm
-    # beq $v0, 0, push_atuadores
-    # ori $s3, $s3, 0x08 # Se luz=1, acende o bit 3 (0x08 - segmento inferior)
+    jal get_estado_luz # chama proc de luminosidade.asm
+     beq $v0, 0, push_atuadores
+     ori $s3, $s3, 0x08 # Se luz=1, acende o bit 3 (0x08 - segmento inferior)
 
 push_atuadores:
     beq $s3, $s4, diag_calor # "cache" -> Se o mostrador já tem esse valor, pula para não piscar!
@@ -101,7 +101,6 @@ push_atuadores:
     
 
 # lógica do diagnóstico (mostrador direito):
-
 diag_calor:
     bne $s2, 0, diag_umid # se não for o turno 0, checa o turno 1
     jal get_estado_calor   # chama proc de temperatura.asm; retorna 0 (ideal) ou 1 (crítico) em $v0
@@ -117,26 +116,26 @@ diag_calor:
 
 diag_umid:
     bne $s2, 1, diag_luz
-    # jal get_estado_umid
-    # beq $v0, 0, apagar_diag
-    # addi $t3, $0, 'U'
-    # beq $t3, $s5, fim_loop
-    # move $s5, $t3
-    # move $a0, $t3
-    # jal atualiza_diagnostico
-    # j fim_loop
+     jal get_estado_umidade
+     beq $v0, 0, apagar_diag
+     addi $t3, $0, 'U'
+     beq $t3, $s5, fim_loop
+     move $s5, $t3
+     move $a0, $t3
+     jal atualiza_diagnostico
+     j fim_loop
     j apagar_diag # turno de umidade, mas umidade não implementada -> apaga display
 
 diag_luz:
     bne $s2, 2, apagar_diag
-    # jal get_estado_lumi
-    # beq $v0, 0, apagar_diag
-    # addi $t3, $0, 'L'
-    # beq $t3, $s5, fim_loop
-    # move $s5, $t3
-    # move $a0, $t3
-    # jal atualiza_diagnostico
-    # j fim_loop
+     jal get_estado_luz
+    beq $v0, 0, apagar_diag
+     addi $t3, $0, 'L'
+     beq $t3, $s5, fim_loop
+     move $s5, $t3
+     move $a0, $t3
+     jal atualiza_diagnostico
+     j fim_loop
     j apagar_diag # turno de luz, mas luz não implementada -> apaga display
     
 apagar_diag:
