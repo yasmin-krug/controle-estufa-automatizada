@@ -39,9 +39,9 @@ ler_teclado:
     li $t2, 0x08 # 0x08 seleciona a Linha 3
     sb $t2, 0($t0) # envia o comando para o teclado
     
-      
-    nop
-    nop
+    li $v0, 32
+    li $a0, 10
+    syscall
     
     lb $t3, 0($t1) # lê a resposta
     # checa se é a tecla C (coluna 0 -> 0x01)
