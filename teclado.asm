@@ -11,7 +11,7 @@
     ultima_tecla: .word 0 # 0 -> nenhuma, 0xA -> tecla A...
 
 .text
-.globl ler_teclado
+.globl ler_teclado, processa_teclado
 
 ler_teclado:
     # salvar endereÃ§os base nos registradores
@@ -88,3 +88,34 @@ checar_repeticao:
 ignora_tecla:
     li $v0, 0 # retorna 0 (ignora a tecla, pois jÃ¡ foi registrada no instante que afundou)
     jr $ra # retorna ao chamador (volta para o main.asm)
+    
+processa_teclado:
+	addi $sp, $sp, -4
+	sw $ra, 0($sp)
+	jal ler_teclado # chama procedimento de teclado.asm para ler as teclas A, B, C
+	# $v0 retorna: 0xA (tecla A), 0xB (tecla B), 0xC (tecla C) ou 0 (nenhuma)
+	
+	# IMPORTANTE: salva o resultado de ler_teclado em $s6 antes de qualquer jal
+	# pois jal sobrescreve $ra e chamadas subsequentes destroem $v0
+	move $s6, $v0
+
+	beq $s6, 0xA, controle_calor # liga/desliga estufa conforme o estado (crítico ou não) de A
+    	beq $s6, 0xB, controle_umid  # liga/desliga irrigação conforme o estado (crítico ou não) de B
+    	beq $s6, 0xC, controle_luz   # liga/desliga iluminação conforme o estado (crítico ou não) de C
+    	j volta_main
+    	
+controle_calor:
+    jal altera_estado_calor
+    j volta_main
+
+controle_umid:
+    jal altera_estado_umidade # TODO: descomentar quando terminar
+    j volta_main
+    
+controle_luz:
+    jal altera_estado_luz # TODO: descomentar quando terminar
+
+volta_main:
+	lw $ra, 0($sp)
+	addi $sp, $sp, 4
+	jr $ra
