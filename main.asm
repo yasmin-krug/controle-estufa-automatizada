@@ -6,7 +6,7 @@ main:
 
 main_loop:
 	jal atualiza_tempo
-    	# checagem de sensor e lógica dos atuadores:
+    	# checagem de sensor e logica dos atuadores:
 	jal processa_teclado    
     	jal logica_atuadores # nenhuma tecla pressionada -> pula para atualizar displays
 	jal logica_diagnostico

@@ -10,14 +10,14 @@
 
 # alternância de temperatura -> inverte o estado do sensor
 altera_estado_umidade:
-    lw $t0, estado_umidade # carrega o estado atual do calor para $t0
+    	lw $t0, estado_umidade # carrega o estado atual do calor para $t0
     
-    xori $t0, $t0, 1 # a instrução xori com o número 1 inverte o bit       
+    	xori $t0, $t0, 1 # a instrução xori com o número 1 inverte o bit       
     
-    sw $t0, estado_umidade # salva o novo estado invertido de volta na memória
-    jr $ra # retorna ao chamador (main.asm)
+    	sw $t0, estado_umidade # salva o novo estado invertido de volta na memória
+    	jr $ra # retorna ao chamador (main.asm)
 
 # get_estado_calor -> informa qual é o estado do sensor e retorna se é ideal (0) ou crítico (1)
 get_estado_umidade:
-    lw $v0, estado_umidade # carrega o estado no $v0 (retorno)
-    jr $ra # retorna ao chamador (main.asm)
+    	lw $v0, estado_umidade # carrega o estado no $v0 (retorno)
+    	jr $ra # retorna ao chamador (main.asm)

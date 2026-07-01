@@ -29,17 +29,17 @@ atualiza_tempo:
     	
     	blt $t1, $t2, espera_hardware
     	# depois de passar 1ms:
-    	# atualizaÁ„o de ˙ltimo tempo para tempo atual para o prÛximo ciclo
+    	# atualiza√ß√£o de √∫ltimo tempo para tempo atual para o pr√≥ximo ciclo
     	move $s0, $t0   
     
-    	# contador de altern‚ncia temporal
-    	add $s1, $s1, $t1 # incrementa o contador com a diferenÁa real de tempo
-    	blt $s1, 1000, volta_para_iniciar_logica_atuadores # se contador < 1000ms (1 seg), n„o troca o turno 
+    	# contador de altern√¢ncia temporal
+    	add $s1, $s1, $t1 # incrementa o contador com a diferen√ßa real de tempo
+    	blt $s1, 1000, volta_para_iniciar_logica_atuadores # se contador < 1000ms (1 seg), n√£o troca o turno 
     
     	# 1 segundo passou:
     	addi $s1, $0, 0 # reseta para 0 contador de milissegundos
-    	addi $s2, $s2, 1 # O turno altera para o prÛximo sistema (0 -> 1 -> 2)
-    	blt $s2, 3, volta_para_iniciar_logica_atuadores # se o turno È menor do que 3, continua sem trocar
+    	addi $s2, $s2, 1 # O turno altera para o pr√≥ximo sistema (0 -> 1 -> 2)
+    	blt $s2, 3, volta_para_iniciar_logica_atuadores # se o turno o menor do que 3, continua sem trocar
     	addi $s2, $0, 0 # se o turno chegou em 3, reseta para 0 (volta ao turno do calor) 
 
     	jr $ra
@@ -48,11 +48,11 @@ volta_para_iniciar_logica_atuadores:
  	jr $ra
     	
 espera_hardware:
-    # Usamos sleep de 10ms para:
-    # 1. Ser r√°pido o suficiente para capturar rea√ß√£o humana (< 150ms)
-    # 2. Dar tempo suficiente para o Digital Lab Sim registrar cliques do mouse
-    # 3. Evitar que a JVM do MARS trave com busy-wait puro
-    addi $v0, $0, 32  # Service code 32 -> sleep
-    addi $a0, $0, 10  # Sleep por 10 milissegundos
+    # usamos sleep de 10ms para:
+    # ser r√°pido o suficiente para capturar rea√ß√£o humana (< 150ms)
+    # dar tempo suficiente para o Digital Lab Sim registrar cliques do mouse
+    # evitar que a JVM do MARS trave com busy-wait puro
+    addi $v0, $0, 32  # service code 32 -> sleep
+    addi $a0, $0, 10  # sleep por 10 milissegundos
     syscall           
     j atualiza_tempo
